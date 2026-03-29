@@ -1,0 +1,1701 @@
+
+
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-дневный план обучения Unity</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f5f0;
+            --text: #1a1a1a;
+            --text-muted: #999;
+            --text-light: #bbb;
+            --accent: #1a1a1a;
+            --border: #e0e0d8;
+            --card-bg: #ffffff;
+            --sidebar-width: 420px;
+            --progress-width: 6px;
+            --check-size: 22px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: row;
+            border-right: 1px solid var(--border);
+        }
+
+        /* Progress bar */
+        .progress-track {
+            width: var(--progress-width);
+            height: 100vh;
+            background: var(--border);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .progress-fill {
+            width: 100%;
+            background: var(--accent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 0%;
+            transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .progress-glow {
+            position: absolute;
+            bottom: -4px;
+            left: -3px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .progress-fill:hover .progress-glow {
+            opacity: 0.3;
+        }
+
+        /* Sidebar content */
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 24px 40px 28px;
+            scrollbar-width: none;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Logo / Title */
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            cursor: pointer;
+        }
+
+        .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .sidebar-logo:hover .sidebar-logo-icon {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-logo-text {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Stats */
+        .sidebar-stats {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .stats-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stats-value {
+            font-size: 22px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stats-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Week nav */
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-week-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            padding: 16px 0 8px;
+        }
+
+        /* Nav list — omse style */
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+            background: rgba(0,0,0,0.03);
+        }
+
+        .nav-link.active {
+            color: var(--text);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .nav-link.active::before {
+            content: '●';
+            position: absolute;
+            left: -4px;
+            font-size: 10px;
+        }
+
+        .nav-link.completed {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            text-decoration-color: var(--text-light);
+        }
+
+        .nav-link-day {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .nav-link-label {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-link-progress {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 8px;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+
+        /* Tags */
+        .sidebar-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .sidebar-tag {
+            padding: 6px 14px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .sidebar-tag:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        /* ===================== MAIN CONTENT ===================== */
+        .main {
+            margin-left: var(--sidebar-width);
+            padding: 60px 80px 120px;
+            max-width: 900px;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 60px;
+        }
+
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .page-meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .meta-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Week section */
+        .week-section {
+            margin-bottom: 80px;
+        }
+
+        .week-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--text);
+        }
+
+        .week-number {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .week-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .week-manual-ref {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 32px;
+            padding: 12px 16px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border-left: 3px solid var(--text-muted);
+        }
+
+        /* Day card */
+        .day-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+            scroll-margin-top: 30px;
+        }
+
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+
+        .day-card.all-done {
+            opacity: 0.7;
+            border: 2px solid #c8e6c9;
+        }
+
+        .day-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .day-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .day-number {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .day-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .day-progress-badge {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-variant-numeric: tabular-nums;
+            transition: all 0.3s;
+        }
+
+        .day-progress-badge.complete {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        /* Task list */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            transition: opacity 0.3s;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Custom checkbox */
+        .task-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: var(--check-size);
+            height: var(--check-size);
+            min-width: var(--check-size);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            margin-top: 2px;
+            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+            background: transparent;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--text);
+            transform: scale(1.1);
+        }
+
+        .task-checkbox:checked {
+            background: var(--text);
+            border-color: var(--text);
+            animation: checkPop 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .task-checkbox:checked::after {
+            content: '✕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        @keyframes checkPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .task-item.done .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-text {
+            font-size: 15px;
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+
+        .task-text strong {
+            font-weight: 700;
+        }
+
+        .task-text code {
+            background: var(--bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        /* Special blocks inside day */
+        .day-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-top: 20px;
+            margin-bottom: 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .manual-ref {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 16px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .practice-block {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: #fafaf5;
+            border-left: 3px solid var(--text);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .practice-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .folder-structure {
+            background: var(--bg);
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            margin: 12px 0;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* Final project table */
+        .final-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .final-table th,
+        .final-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .final-table th {
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        /* Resources section */
+        .resources-section {
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 2px solid var(--text);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .resource-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .resource-name {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .resource-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ===================== MOBILE ===================== */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            z-index: 200;
+            padding: 0 20px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-menu-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .mobile-progress-bar {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--border);
+            z-index: 200;
+        }
+
+        .mobile-progress-fill {
+            height: 100%;
+            background: var(--text);
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            width: 0%;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .mobile-progress-bar {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+                z-index: 150;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+                opacity: 1;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 80px 20px 120px;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .week-title {
+                font-size: 22px;
+            }
+
+            .day-card {
+                padding: 24px;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll animation */
+        .day-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-card:nth-child(1) { animation-delay: 0.05s; }
+        .day-card:nth-child(2) { animation-delay: 0.1s; }
+        .day-card:nth-child(3) { animation-delay: 0.15s; }
+        .day-card:nth-child(4) { animation-delay: 0.2s; }
+        .day-card:nth-child(5) { animation-delay: 0.25s; }
+        .day-card:nth-child(6) { animation-delay: 0.3s; }
+        .day-card:nth-child(7) { animation-delay: 0.35s; }
+    </style>
+</head>
+<body>
+
+<!-- Mobile Header -->
+<div class="mobile-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+        <div class="sidebar-logo-icon">◎</div>
+        <span style="font-weight:700;font-size:14px;">Unity 30 Days</span>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+</div>
+<div class="mobile-progress-bar">
+    <div class="mobile-progress-fill" id="mobileProgressFill"></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<nav class="sidebar" id="sidebar">
+    <div class="progress-track">
+        <div class="progress-fill" id="progressFill">
+            <div class="progress-glow"></div>
+        </div>
+    </div>
+    <div class="sidebar-content">
+        <!-- Logo -->
+        <div class="sidebar-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+            <div class="sidebar-logo-icon">◎</div>
+            <div class="sidebar-logo-text">Unity · 30 Days</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="sidebar-stats">
+            <div class="stats-row">
+                <span class="stats-label">Прогресс</span>
+                <span class="stats-value" id="statsPercent">0%</span>
+            </div>
+            <div class="stats-sub">
+                <span id="statsDone">0</span> из <span id="statsTotal">0</span> задач выполнено
+            </div>
+        </div>
+
+        <!-- Week 1 -->
+        <div class="nav-section">
+            <div class="nav-week-title">Неделя 1</div>
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link" href="#day1" data-day="1"><span class="nav-link-label">Интерфейс Unity</span><span class="nav-link-progress" data-day-progress="1"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day2" data-day="2"><span class="nav-link-label">GameObjects и Components</span><span class="nav-link-progress" data-day-progress="2"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day3" data-day="3"><span class="nav-link-label">Prefabs, Tags, Layers</span><span class="nav-link-progress" data-day-progress="3"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day4" data-day="4"><span class="nav-link-label">Импорт 3D-моделей</span><span class="nav-link-progress" data-day-progress="4"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day5" data-day="5"><span class="nav-link-label">Импорт текстур</span><span class="nav-link-progress" data-day-progress="5"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day6" data-day="6"><span class="nav-link-label">Asset Store и организация</span><span class="nav-link-progress" data-day-progress="6"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day7" data-day="7"><span class="nav-link-label">Сборка сцены</span><span class="nav-link-progress" data-day-progress="7"></span></a></li>
+            </ul>
+        </div>
+
+        <!-- Week 2 -->
+        <div class="nav-section">
+            <div class="nav-week-title">Неделя 2</div>
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link" href="#day8" data-day="8"><span class="nav-link-label">PBR-материалы: теория</span><span class="nav-link-progress" data-day-progress="8"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day9" data-day="9"><span class="nav-link-label">PBR-материалы: практика</span><span class="nav-link-progress" data-day-progress="9"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day10" data-day="10"><span class="nav-link-label">Shader Graph: введение</span><span class="nav-link-progress" data-day-progress="10"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day11" data-day="11"><span class="nav-link-label">Shader Graph: математика</span><span class="nav-link-progress" data-day-progress="11"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day12" data-day="12"><span class="nav-link-label">Shader Graph: продвинутое</span><span class="nav-link-progress" data-day-progress="12"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day13" data-day="13"><span class="nav-link-label">Shader Graph: эффекты</span><span class="nav-link-progress" data-day-progress="13"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day14" data-day="14"><span class="nav-link-label">Shader Graph: оптимизация</span><span class="nav-link-progress" data-day-progress="14"></span></a></li>
+            </ul>
+        </div>
+
+        <!-- Week 3 -->
+        <div class="nav-section">
+            <div class="nav-week-title">Неделя 3</div>
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link" href="#day15" data-day="15"><span class="nav-link-label">Освещение: типы</span><span class="nav-link-progress" data-day-progress="15"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day16" data-day="16"><span class="nav-link-label">Lightmapping</span><span class="nav-link-progress" data-day-progress="16"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day17" data-day="17"><span class="nav-link-label">Пост-процессинг: основы</span><span class="nav-link-progress" data-day-progress="17"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day18" data-day="18"><span class="nav-link-label">Пост-процессинг: все эффекты</span><span class="nav-link-progress" data-day-progress="18"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day19" data-day="19"><span class="nav-link-label">Particle System: основы</span><span class="nav-link-progress" data-day-progress="19"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day20" data-day="20"><span class="nav-link-label">Particle System: модули</span><span class="nav-link-progress" data-day-progress="20"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day21" data-day="21"><span class="nav-link-label">Particles + мини-проект</span><span class="nav-link-progress" data-day-progress="21"></span></a></li>
+            </ul>
+        </div>
+
+        <!-- Week 4 -->
+        <div class="nav-section">
+            <div class="nav-week-title">Неделя 4</div>
+            <ul class="nav-list">
+                <li class="nav-item"><a class="nav-link" href="#day22" data-day="22"><span class="nav-link-label">Animation: клипы</span><span class="nav-link-progress" data-day-progress="22"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day23" data-day="23"><span class="nav-link-label">Animator Controller</span><span class="nav-link-progress" data-day-progress="23"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day24" data-day="24"><span class="nav-link-label">Blend Trees</span><span class="nav-link-progress" data-day-progress="24"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day25" data-day="25"><span class="nav-link-label">Unity UI (uGUI)</span><span class="nav-link-progress" data-day-progress="25"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day26" data-day="26"><span class="nav-link-label">TextMeshPro + UI</span><span class="nav-link-progress" data-day-progress="26"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day27" data-day="27"><span class="nav-link-label">Профилирование</span><span class="nav-link-progress" data-day-progress="27"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day28" data-day="28"><span class="nav-link-label">Оптимизация материалов</span><span class="nav-link-progress" data-day-progress="28"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day29" data-day="29"><span class="nav-link-label">Оптимизация сцены</span><span class="nav-link-progress" data-day-progress="29"></span></a></li>
+                <li class="nav-item"><a class="nav-link" href="#day30" data-day="30"><span class="nav-link-label">Финальный проект</span><span class="nav-link-progress" data-day-progress="30"></span></a></li>
+            </ul>
+        </div>
+
+        <!-- Tags -->
+        <div class="sidebar-tags">
+            <span class="sidebar-tag">PBR</span>
+            <span class="sidebar-tag">Shader Graph</span>
+            <span class="sidebar-tag">Particles</span>
+            <span class="sidebar-tag">Animator</span>
+            <span class="sidebar-tag">UI/UX</span>
+            <span class="sidebar-tag">Post-FX</span>
+            <span class="sidebar-tag">Optimization</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="main">
+    <header class="page-header">
+        <h1 class="page-title">30-дневный план<br>обучения Unity</h1>
+        <p class="page-subtitle">Building Blocks → Assets → Graphics → Animation → UI → Optimization<br>В соответствии со структурой официального мануала Unity 6000.3</p>
+        <div class="page-meta">
+            <div class="meta-item"><div class="meta-icon">📅</div> 30 дней</div>
+            <div class="meta-item"><div class="meta-icon">⏱</div> 2–3 часа / день</div>
+            <div class="meta-item"><div class="meta-icon">🎯</div> URP Pipeline</div>
+            <div class="meta-item"><div class="meta-icon">📖</div> Unity 6000.3</div>
+        </div>
+    </header>
+
+    <!-- ==================== WEEK 1 ==================== -->
+    <section class="week-section">
+        <div class="week-header">
+            <span class="week-number">Неделя 1</span>
+            <h2 class="week-title">Building Blocks + Assets Workflow</h2>
+        </div>
+        <div class="week-manual-ref">Мануал: Building Blocks, Working in Unity — Assets</div>
+
+        <!-- Day 1 -->
+        <div class="day-card" id="day1">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 1</span>
+                    <h3 class="day-title">Интерфейс Unity</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="1">0/6</span>
+            </div>
+            <ul class="task-list" data-day="1">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Установка Unity Hub, выбор LTS-версии, установка URP-шаблона</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Изучить окна редактора: <strong>Scene, Game, Inspector, Hierarchy, Project, Console</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Навигация в Scene View: орбита, зум, flythrough (<code>WASD + ПКМ</code>)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Горячие клавиши: <code>Q/W/E/R/T</code>, <code>F</code> (фокус), <code>Ctrl+D</code> (дупликат)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Прочитать мануал: <em>Unity Overview → The Editor</em></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> создай URP-проект, расставь примитивы, освойся с навигацией</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="day-card" id="day2">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 2</span>
+                    <h3 class="day-title">GameObjects и Components</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="2">0/6</span>
+            </div>
+            <ul class="task-list" data-day="2">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Что такое <strong>GameObject</strong> — пустой контейнер для компонентов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Component-архитектура:</strong> каждый компонент = поведение</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Transform:</strong> Position, Rotation, Scale (локальные vs мировые координаты)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Основные компоненты: <code>MeshFilter</code>, <code>MeshRenderer</code>, <code>Collider</code>, <code>Rigidbody</code></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Иерархия объектов: <strong>Parent-Child</strong>, наследование трансформов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> построй башню из примитивов с вложенной иерархией, добавь компоненты вручную</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="day-card" id="day3">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 3</span>
+                    <h3 class="day-title">Prefabs, Tags, Layers, Scenes</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="3">0/6</span>
+            </div>
+            <ul class="task-list" data-day="3">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Prefabs:</strong> создание, изменение, Override, Nested Prefabs, Prefab Variants</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Tags:</strong> назначение, стандартные теги, кастомные теги</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Layers:</strong> использование для камеры, физики, освещения</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Scenes:</strong> создание, загрузка, мульти-сцена</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Static Flags:</strong> Batching Static, Navigation Static, Occluder/Occludee</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> сделай 5 префабов (лампа, стул, стена, дверь, ящик), назначь теги и слои</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 4 -->
+        <div class="day-card" id="day4">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 4</span>
+                    <h3 class="day-title">Импорт 3D-моделей</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="4">0/7</span>
+            </div>
+            <ul class="task-list" data-day="4">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Поддерживаемые форматы: <strong>FBX</strong> (основной), OBJ, glTF</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Вкладка <strong>Model:</strong> Scale Factor, Mesh Compression, Read/Write, Generate Colliders</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Normals: Import, Calculate, None. Geometry: Generate Lightmap UVs, Swap UVs</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Вкладка <strong>Rig:</strong> Animation Type (Generic, Humanoid, Legacy, None)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Вкладка <strong>Materials:</strong> Extract Materials, remapping</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Прочитать мануал: <em>Working in Unity → Assets → 3D model import</em></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> скачай 5 моделей с Sketchfab/Poly Haven, импортируй и настрой</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 5 -->
+        <div class="day-card" id="day5">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 5</span>
+                    <h3 class="day-title">Импорт текстур</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="5">0/8</span>
+            </div>
+            <ul class="task-list" data-day="5">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Форматы: PNG, TGA, PSD, EXR, HDR</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Texture Type:</strong> Default, Normal Map, Sprite, Cookie, Lightmap, Single Channel</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>sRGB:</strong> вкл. для цветовых карт (Albedo, Emission), выкл. для data-карт (Normal, Metallic, AO)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Max Size:</strong> 512 / 1024 / 2048 / 4096 — выбор по назначению</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Compression:</strong> None, Low, Normal, High Quality</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Mip Maps:</strong> зачем нужны, Mip Map Streaming</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Format per platform: ASTC (мобильные), BC7/DXT (PC)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> импортируй полный PBR-сет, настрой каждую карту корректно</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 6 -->
+        <div class="day-card" id="day6">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 6</span>
+                    <h3 class="day-title">Asset Store, Package Manager, организация</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="6">0/5</span>
+            </div>
+            <ul class="task-list" data-day="6">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Unity Asset Store:</strong> поиск, импорт ассетов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Package Manager:</strong> Registry-пакеты, Git URL, Local пакеты</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Изучить рекомендуемую структуру папок проекта (Art, Prefabs, Scenes, UI, VFX)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Asset Labels, Search by Type, фильтрация</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> скачай 2–3 бесплатных пакета, организуй папки, разбери ассеты</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 7 -->
+        <div class="day-card" id="day7">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 7</span>
+                    <h3 class="day-title">Сборка сцены и повторение</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="7">0/5</span>
+            </div>
+            <ul class="task-list" data-day="7">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Собери сцену-комнату из импортированных моделей</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Все модели — через <strong>префабы</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Назначь слои и теги всем объектам</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Проверь настройки импорта всех ассетов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Результат:</strong> организованный проект со сценой</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ==================== WEEK 2 ==================== -->
+    <section class="week-section">
+        <div class="week-header">
+            <span class="week-number">Неделя 2</span>
+            <h2 class="week-title">Graphics — Материалы и Shader Graph</h2>
+        </div>
+        <div class="week-manual-ref">Мануал: Graphics → Materials, Shaders, and Textures → Shader Graph</div>
+
+        <!-- Day 8 -->
+        <div class="day-card" id="day8">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 8</span>
+                    <h3 class="day-title">PBR-материалы: теория</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="8">0/5</span>
+            </div>
+            <ul class="task-list" data-day="8">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Что такое <strong>PBR</strong> (Physically Based Rendering), принцип энергосбережения</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Metallic/Roughness</strong> workflow vs <strong>Specular/Glossiness</strong> workflow</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Карты: Albedo, Normal, Metallic, Smoothness, AO, Height, Emission — что описывают</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Диэлектрики vs Металлы: типичные значения</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> изучи PBR-сеты на Poly Haven, определи тип каждой карты</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 9 -->
+        <div class="day-card" id="day9">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 9</span>
+                    <h3 class="day-title">PBR-материалы: практика в Unity</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="9">0/5</span>
+            </div>
+            <ul class="task-list" data-day="9">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>URP Lit Shader:</strong> Surface Type, Render Face, Alpha Clipping, все слоты текстур</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Создание материалов, назначение текстур, Tiling, Offset</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Detail Maps, Secondary Maps</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Разница: URP Lit, Simple Lit, Unlit, Complex Lit</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> создай 6 материалов — металл, дерево, камень, стекло, ткань, пластик</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 10 -->
+        <div class="day-card" id="day10">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 10</span>
+                    <h3 class="day-title">Shader Graph: введение</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="10">0/6</span>
+            </div>
+            <ul class="task-list" data-day="10">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Зачем нужен Shader Graph — визуальное программирование шейдеров</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Создание Shader Graph ассета (URP → Lit/Unlit Shader Graph)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Интерфейс: <strong>Master Stack</strong>, Blackboard, Graph Inspector, Main Preview</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Основные понятия: Node, Port, Edge</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Первые ноды: Color, Texture2D, Sample Texture 2D, UV, Multiply</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> создай простой Lit-шейдер: текстура × цвет → Base Color</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 11 -->
+        <div class="day-card" id="day11">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 11</span>
+                    <h3 class="day-title">Shader Graph: математика и UV</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="11">0/5</span>
+            </div>
+            <ul class="task-list" data-day="11">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Математические ноды: Add, Multiply, Lerp, Clamp, Remap, Power, Step, Smoothstep</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">UV-ноды: Tiling and Offset, Rotate, Polar Coordinates, Radial Shear</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Нода <strong>Time</strong> — создание анимации. Sine, Cosine — периодические эффекты</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Fresnel Effect</strong> — свечение по краям</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> шейдер анимированного UV-скролла (река) + шейдер с Fresnel</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 12 -->
+        <div class="day-card" id="day12">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 12</span>
+                    <h3 class="day-title">Shader Graph: продвинутые техники</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="12">0/5</span>
+            </div>
+            <ul class="task-list" data-day="12">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Normal Map в Shader Graph (<code>Normal Unpack</code>, Normal Strength)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Noise ноды: Simple Noise, Gradient Noise, Voronoi</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Dissolve-эффект:</strong> Step + Noise + Alpha Clip</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Vertex Displacement:</strong> смещение вершин (трава, волны)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> dissolve-шейдер + шейдер травы с Vertex Displacement</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 13 -->
+        <div class="day-card" id="day13">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 13</span>
+                    <h3 class="day-title">Shader Graph: прозрачность и спецэффекты</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="13">0/4</span>
+            </div>
+            <ul class="task-list" data-day="13">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Surface Type: Opaque → Transparent. <strong>Alpha Blending vs Alpha Clipping</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Шейдер <strong>голограммы:</strong> Fresnel + Emission + Scanlines</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Шейдер <strong>щита/барьера:</strong> Fresnel + пульсация + intersection (Scene Depth)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> 2 эффектных шейдера — голограмма и энергетический щит</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 14 -->
+        <div class="day-card" id="day14">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 14</span>
+                    <h3 class="day-title">Shader Graph: Blackboard и Channel Packing</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="14">0/5</span>
+            </div>
+            <ul class="task-list" data-day="14">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Blackboard:</strong> свойства (Float, Color, Texture2D, Vector, Boolean, Keyword)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Channel Packing:</strong> 3 текстуры → 1 (Metallic=R, AO=G, Smoothness=A)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Ноды <code>Split</code>, <code>Combine</code> для работы с каналами</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Keyword ноды, Sub Graphs, советы по оптимизации</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> универсальный PBR Shader Graph с упакованными каналами</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ==================== WEEK 3 ==================== -->
+    <section class="week-section">
+        <div class="week-header">
+            <span class="week-number">Неделя 3</span>
+            <h2 class="week-title">Lighting, Post-processing, VFX</h2>
+        </div>
+        <div class="week-manual-ref">Мануал: Graphics → Lighting → Post-processing → Visual Effects</div>
+
+        <!-- Day 15 -->
+        <div class="day-card" id="day15">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 15</span>
+                    <h3 class="day-title">Освещение: типы и режимы</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="15">0/6</span>
+            </div>
+            <ul class="task-list" data-day="15">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Типы источников: <strong>Directional, Point, Spot, Area</strong> (baked only)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Режимы: <strong>Realtime, Mixed, Baked</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Настройки: Intensity, Range, Color, Shadow Type, Bias</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Environment Lighting: Skybox, Gradient, Color</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Reflection Probes</strong> и <strong>Light Probes:</strong> назначение, расстановка</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> настрой освещение — Directional + Point/Spot, расставь Probes</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 16 -->
+        <div class="day-card" id="day16">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 16</span>
+                    <h3 class="day-title">Lightmapping и Baking</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="16">0/5</span>
+            </div>
+            <ul class="task-list" data-day="16">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Progressive Lightmapper:</strong> CPU vs GPU</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Настройки: Lightmap Resolution, Padding, Max Lightmap Size</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Static → Contribute GI. Mixed Lighting режимы</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Light Probes Group: размещение, тетраэдризация</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> запеки освещение, сравни Realtime vs Baked</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 17 -->
+        <div class="day-card" id="day17">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 17</span>
+                    <h3 class="day-title">Пост-процессинг: Volume System</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="17">0/6</span>
+            </div>
+            <ul class="task-list" data-day="17">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">URP Volume System: <strong>Global Volume vs Local Volume</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Volume Profile, Volume Override. Camera Post Processing флаг</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Bloom:</strong> Threshold, Intensity, Scatter, Tint</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Tonemapping:</strong> None, Neutral, ACES</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Color Adjustments:</strong> Post Exposure, Contrast, Color Filter, Saturation</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> добавь Global Volume, настрой Bloom + ACES + Color Adjustments</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 18 -->
+        <div class="day-card" id="day18">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 18</span>
+                    <h3 class="day-title">Пост-процессинг: все эффекты</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="18">0/6</span>
+            </div>
+            <ul class="task-list" data-day="18">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Vignette, Film Grain, Chromatic Aberration</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Depth of Field:</strong> Gaussian vs Bokeh</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Motion Blur</strong> и <strong>SSAO</strong> (Ambient Occlusion)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Anti-Aliasing:</strong> MSAA, FXAA, SMAA</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Lens Distortion, Panini Projection</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> создай 3 Volume Profile (день, ночь, хоррор)</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 19 -->
+        <div class="day-card" id="day19">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 19</span>
+                    <h3 class="day-title">Particle System: основы</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="19">0/5</span>
+            </div>
+            <ul class="task-list" data-day="19">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Модуль <strong>Main:</strong> Duration, Looping, Start Lifetime, Speed, Size, Color, Gravity</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Модуль <strong>Emission:</strong> Rate over Time, Bursts</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Модуль <strong>Shape:</strong> Sphere, Cone, Box, Circle, Edge, Mesh</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Модуль <strong>Renderer:</strong> Billboard, Stretched Billboard, Mesh. Material, Sorting</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> базовые эффекты — дым, искры, дождь, снег</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 20 -->
+        <div class="day-card" id="day20">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 20</span>
+                    <h3 class="day-title">Particle System: продвинутые модули</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="20">0/6</span>
+            </div>
+            <ul class="task-list" data-day="20">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Color/Size/Rotation over Lifetime</strong> — кривые и градиенты</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Velocity over Lifetime, Noise</strong> — управление и турбулентность</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Texture Sheet Animation</strong> — анимированные спрайты</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Sub Emitters</strong> — дочерние эмиттеры. <strong>Trails</strong> — шлейфы</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Lights, Collision</strong> — частицы-источники света, столкновения</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> костёр (пламя + искры + дым) и магический портал</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 21 -->
+        <div class="day-card" id="day21">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 21</span>
+                    <h3 class="day-title">Кастомные шейдеры для частиц + мини-проект</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="21">0/6</span>
+            </div>
+            <ul class="task-list" data-day="21">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Shader Graph для частиц: Unlit + Transparent</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Нода <strong>Vertex Color</strong> — получение цвета от Particle System</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Soft Particles</strong> (Scene Depth). <strong>Distortion</strong>-шейдер</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Доработай сцену: PBR-материалы + Shader Graph шейдеры</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Добавь освещение (Baked + Realtime) + Post-processing Volume</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Результат:</strong> визуально законченная диорама с 2–3 VFX</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ==================== WEEK 4 ==================== -->
+    <section class="week-section">
+        <div class="week-header">
+            <span class="week-number">Неделя 4</span>
+            <h2 class="week-title">Animation, UI, Оптимизация</h2>
+        </div>
+        <div class="week-manual-ref">Мануал: Animation → UI → Optimization / Best Practices</div>
+
+        <!-- Day 22 -->
+        <div class="day-card" id="day22">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 22</span>
+                    <h3 class="day-title">Animation: клипы и Animation Window</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="22">0/6</span>
+            </div>
+            <ul class="task-list" data-day="22">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Обзор системы анимации Unity. <strong>Animation Window</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Ключевые кадры: Transform, цвет, свойства компонентов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Curves: Linear, Constant, Free Smooth</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Запись анимации в реальном времени (Record mode)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Анимация свойств Material и активности GameObject</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> анимируй вентилятор, дверь, пульсирующий свет</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 23 -->
+        <div class="day-card" id="day23">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 23</span>
+                    <h3 class="day-title">Animator Controller и State Machine</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="23">0/6</span>
+            </div>
+            <ul class="task-list" data-day="23">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Компонент <strong>Animator</strong>, Animator Controller ассет</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>States</strong>, Default State. <strong>Transitions:</strong> условия, Has Exit Time, Duration</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Parameters:</strong> Bool, Trigger, Float, Int</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Any State, Entry, Exit</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Layers: Override, Additive. <strong>Avatar Mask</strong> (основы)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> контроллер для двери — Closed → Opening → Open → Closing</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 24 -->
+        <div class="day-card" id="day24">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 24</span>
+                    <h3 class="day-title">Blend Trees</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="24">0/5</span>
+            </div>
+            <ul class="task-list" data-day="24">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Зачем <strong>Blend Tree</strong>: плавное смешивание анимаций</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>1D Blend Tree:</strong> один параметр (Speed: Idle → Walk → Run)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>2D Blend Trees:</strong> Simple Directional, Freeform Directional, Cartesian</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Threshold, Compute Thresholds</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> скачай Mixamo-анимации, настрой 1D и 2D Blend Tree</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 25 -->
+        <div class="day-card" id="day25">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 25</span>
+                    <h3 class="day-title">Unity UI (uGUI): основы</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="25">0/6</span>
+            </div>
+            <ul class="task-list" data-day="25">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Canvas:</strong> Screen Space Overlay, Screen Space Camera, World Space</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Canvas Scaler:</strong> Constant Pixel Size, Scale With Screen Size</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>RectTransform:</strong> Anchors, Pivot, Stretch</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Элементы: Image, Button, Toggle, Slider, Dropdown, InputField, ScrollRect</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Layout Groups:</strong> Horizontal, Vertical, Grid. Content Size Fitter</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> собери HUD — полоска HP, счётчик очков, 3 кнопки</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 26 -->
+        <div class="day-card" id="day26">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 26</span>
+                    <h3 class="day-title">TextMeshPro + продвинутый UI</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="26">0/7</span>
+            </div>
+            <ul class="task-list" data-day="26">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>TMP Essentials</strong> — импорт. <strong>Font Asset Creator</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Rich Text: <code>&lt;color&gt;</code>, <code>&lt;size&gt;</code>, <code>&lt;b&gt;</code>, <code>&lt;sprite&gt;</code></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Material Presets: Outline, Shadow, Glow, Bevel. TMP в World Space</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Mask, RectMask2D</strong> — обрезка содержимого</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Scroll Rect + Content Size Fitter → прокручиваемый список</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">UI-анимация через Animator. Event System, Raycast Target</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> экран инвентаря со скроллом, TMP-заголовки, анимация панели</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 27 -->
+        <div class="day-card" id="day27">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 27</span>
+                    <h3 class="day-title">Профилирование и диагностика</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="27">0/6</span>
+            </div>
+            <ul class="task-list" data-day="27">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Profiler Window:</strong> CPU, GPU, Rendering, Memory</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Frame Debugger:</strong> пошаговый просмотр draw calls</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Stats Window:</strong> Batches, Tris, Verts, SetPass Calls</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Rendering Debugger</strong> (URP): Wireframe, Overdraw, Mip Maps</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Draw Call, Batch, Overdraw, Fill Rate. CPU-bound vs GPU-bound</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> запиши Profiler, найди тяжёлые draw calls в Frame Debugger</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 28 -->
+        <div class="day-card" id="day28">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 28</span>
+                    <h3 class="day-title">Оптимизация материалов и текстур</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="28">0/7</span>
+            </div>
+            <ul class="task-list" data-day="28">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Выбор размера текстур по назначению объекта (512–4096)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Compression per platform: ASTC (моб.), BC7/DXT5 (PC)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Channel Packing:</strong> Metallic(R) + AO(G) + Smoothness(A) → 1 текстура</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Texture Atlasing. Отключение Read/Write. Sprite Atlas для UI</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Минимизация Shader Variants / Keywords</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>SRP Batcher</strong>, GPU Instancing, Material Property Blocks</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> оптимизируй текстуры — упакуй каналы, подбери размеры</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 29 -->
+        <div class="day-card" id="day29">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 29</span>
+                    <h3 class="day-title">Оптимизация сцены и рендеринга</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="29">0/8</span>
+            </div>
+            <ul class="task-list" data-day="29">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Batching:</strong> Static, Dynamic, SRP Batcher — приоритет</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>LOD Group:</strong> Level of Detail — настройка порогов</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Occlusion Culling:</strong> Bake, Visualization</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Camera:</strong> Far Clip Plane, Layer Culling Distances</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Свет:</strong> ограничение Range, отключение теней мелких источников</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>URP Asset:</strong> Shadow Resolution, Cascade Count, HDR, Render Scale</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Quality Settings:</strong> уровни (Low, Medium, High). Culling партиклов, UI Canvas</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Практика:</strong> добавь LOD, Occlusion Culling, сравни Stats до/после</span></li>
+            </ul>
+        </div>
+
+        <!-- Day 30 -->
+        <div class="day-card" id="day30">
+            <div class="day-card-header">
+                <div class="day-label">
+                    <span class="day-number">День 30</span>
+                    <h3 class="day-title">Финальный проект</h3>
+                </div>
+                <span class="day-progress-badge" data-badge="30">0/10</span>
+            </div>
+            <ul class="task-list" data-day="30">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Организованный проект: префабы, слои, теги, структура папок</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Корректно настроенные импортированные модели и текстуры</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>5+ PBR-материалов</strong> (металл, дерево, камень, стекло, ткань)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>2+ кастомных Shader Graph</strong> шейдера (dissolve, голограмма, вода и т.д.)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Освещение: <strong>Baked + Realtime</strong>, Light/Reflection Probes</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Global Volume</strong> с Bloom, Tonemapping, Color Grading, DoF</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>2+ VFX</strong> на Particle System (огонь, портал, пыль и т.д.)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text">Анимированный объект/персонаж с <strong>Animator + Blend Tree</strong></span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>HUD</strong> с uGUI + TextMeshPro (HP, текст, кнопки)</span></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><span class="task-text"><strong>Оптимизация:</strong> LOD, Occlusion Culling, батчинг. Скриншоты/видео для портфолио</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ==================== RESOURCES ==================== -->
+    <section class="resources-section">
+        <h2 class="week-title" style="margin-bottom: 8px;">Ресурсы</h2>
+        <p style="color:var(--text-muted);font-size:15px;">Основные источники для каждой темы плана</p>
+        <div class="resources-grid">
+            <div class="resource-card">
+                <div class="resource-name">📖 Unity Manual 6000.3</div>
+                <div class="resource-desc">Основной источник — docs.unity3d.com</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">🎓 Unity Learn</div>
+                <div class="resource-desc">Пошаговые туториалы — learn.unity.com</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">🎬 Brackeys</div>
+                <div class="resource-desc">YouTube — основы, UI, Animator</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">✨ Gabriel Aguiar Prod.</div>
+                <div class="resource-desc">YouTube — VFX, Particles, Shader Graph</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">🔮 Ben Cloward</div>
+                <div class="resource-desc">YouTube — Shader Graph глубокое погружение</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">🖼 Poly Haven / ambientCG</div>
+                <div class="resource-desc">Бесплатные PBR-текстуры и модели</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">🏃 Mixamo</div>
+                <div class="resource-desc">Бесплатные анимации + персонажи</div>
+            </div>
+            <div class="resource-card">
+                <div class="resource-name">⏱ Темп</div>
+                <div class="resource-desc">2–3 часа в день. Дни 7 и 21 — буферные</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    // ==================== STATE MANAGEMENT ====================
+    const STORAGE_KEY = 'unity30_progress';
+
+    function loadState() {
+        try {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveState(state) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // ==================== INIT ====================
+    function init() {
+        const state = loadState();
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+
+        checkboxes.forEach((cb, index) => {
+            const id = `task_${index}`;
+            cb.dataset.id = id;
+
+            if (state[id]) {
+                cb.checked = true;
+                cb.closest('.task-item').classList.add('done');
+            }
+
+            cb.addEventListener('change', function () {
+                const s = loadState();
+                s[this.dataset.id] = this.checked;
+                saveState(s);
+
+                if (this.checked) {
+                    this.closest('.task-item').classList.add('done');
+                } else {
+                    this.closest('.task-item').classList.remove('done');
+                }
+
+                updateProgress();
+            });
+        });
+
+        updateProgress();
+        setupScrollSpy();
+    }
+
+    // ==================== PROGRESS ====================
+    function updateProgress() {
+        const allCheckboxes = document.querySelectorAll('.task-checkbox');
+        const total = allCheckboxes.length;
+        const done = document.querySelectorAll('.task-checkbox:checked').length;
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+        // Global stats
+        document.getElementById('statsPercent').textContent = percent + '%';
+        document.getElementById('statsDone').textContent = done;
+        document.getElementById('statsTotal').textContent = total;
+
+        // Progress bars
+        document.getElementById('progressFill').style.height = percent + '%';
+        const mobileFill = document.getElementById('mobileProgressFill');
+        if (mobileFill) mobileFill.style.width = percent + '%';
+
+        // Per-day progress
+        for (let day = 1; day <= 30; day++) {
+            const taskList = document.querySelector(`.task-list[data-day="${day}"]`);
+            if (!taskList) continue;
+
+            const dayTotal = taskList.querySelectorAll('.task-checkbox').length;
+            const dayDone = taskList.querySelectorAll('.task-checkbox:checked').length;
+
+            // Badge
+            const badge = document.querySelector(`[data-badge="${day}"]`);
+            if (badge) {
+                badge.textContent = `${dayDone}/${dayTotal}`;
+                if (dayDone === dayTotal && dayTotal > 0) {
+                    badge.classList.add('complete');
+                } else {
+                    badge.classList.remove('complete');
+                }
+            }
+
+            // Card state
+            const card = document.getElementById(`day${day}`);
+            if (card) {
+                if (dayDone === dayTotal && dayTotal > 0) {
+                    card.classList.add('all-done');
+                } else {
+                    card.classList.remove('all-done');
+                }
+            }
+
+            // Nav progress
+            const navProgress = document.querySelector(`[data-day-progress="${day}"]`);
+            if (navProgress) {
+                navProgress.textContent = `${dayDone}/${dayTotal}`;
+            }
+
+            // Nav link completed state
+            const navLink = document.querySelector(`.nav-link[data-day="${day}"]`);
+            if (navLink) {
+                if (dayDone === dayTotal && dayTotal > 0) {
+                    navLink.classList.add('completed');
+                } else {
+                    navLink.classList.remove('completed');
+                }
+            }
+        }
+    }
+
+    // ==================== SCROLL SPY ====================
+    function setupScrollSpy() {
+        const dayCards = document.querySelectorAll('.day-card');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const dayId = entry.target.id;
+                    const dayNum = dayId.replace('day', '');
+
+                    navLinks.forEach(link => link.classList.remove('active'));
+
+                    const activeLink = document.querySelector(`.nav-link[data-day="${dayNum}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+
+                        // Scroll nav into view
+                        activeLink.scrollIntoView({
+                            block: 'nearest',
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        }, {
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0
+        });
+
+        dayCards.forEach(card => observer.observe(card));
+    }
+
+    // ==================== MOBILE SIDEBAR ====================
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    // Close sidebar on nav click (mobile)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.nav-link') && window.innerWidth <= 900) {
+            setTimeout(() => {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('open');
+            }, 200);
+        }
+    });
+
+    // ==================== INIT ON LOAD ====================
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
+```
